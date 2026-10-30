@@ -59,6 +59,12 @@ jobs:
         run: |
           npm ci --prefix backend --no-audit --no-fund
           npm ci --prefix frontend --no-audit --no-fund
+      - name: Install subprocess isolation dependencies
+        if: steps.analysis.outputs.testable != '0'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends bubblewrap socat
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
       - name: Run Unit Test Agent
         id: agent
         if: steps.analysis.outputs.testable != '0'
