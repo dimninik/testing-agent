@@ -1,0 +1,24 @@
+{
+  "name": "taskly-agent-scripts",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "format": "prettier --write .claude/skills/*/scripts .github/scripts eslint.config.js",
+    "format:check": "prettier --check .claude/skills/*/scripts .github/scripts eslint.config.js",
+    "test": "node --test .github/scripts/tests/*.test.ts",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.20.5",
+    "eslint": "10.14.0",
+    "prettier": "3.9.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1"
+  }
+}
