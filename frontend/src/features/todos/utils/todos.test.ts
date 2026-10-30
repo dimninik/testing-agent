@@ -6,6 +6,7 @@ import {
   isOverdue,
   priorityLabels,
   selectTodos,
+  summarizeTodos,
   validateTodo,
 } from './todos'
 
@@ -122,6 +123,39 @@ describe('isOverdue', () => {
     expect(
       isOverdue({ ...todoFixture, due_date: '2026-10-01', completed: true }),
     ).toBe(false)
+  })
+})
+
+describe('summarizeTodos', () => {
+  it('returns zeros and a 0% rate for an empty list', () => {
+    expect(summarizeTodos([])).toEqual({
+      total: 0,
+      completed: 0,
+      active: 0,
+      overdue: 0,
+      completionRate: 0,
+    })
+  })
+  it('counts completed, active and overdue and rounds the rate', () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 15, 12))
+    const todos = [
+      { ...todoFixture, id: 1, completed: true, due_date: '2026-10-01' },
+      { ...todoFixture, id: 2, due_date: '2026-10-14' },
+      { ...todoFixture, id: 3, due_date: '2026-10-20' },
+    ]
+    expect(summarizeTodos(todos)).toEqual({
+      total: 3,
+      completed: 1,
+      active: 2,
+      overdue: 1,
+      completionRate: 33,
+    })
+  })
+  it('reports 100% when all are completed', () => {
+    expect(
+      summarizeTodos([{ ...todoFixture, completed: true }]).completionRate,
+    ).toBe(100)
   })
 })
 

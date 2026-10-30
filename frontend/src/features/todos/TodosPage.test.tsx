@@ -34,6 +34,9 @@ vi.mock('./components/TodosHeader', () => ({
     </>
   ),
 }))
+vi.mock('./components/TodoStats', () => ({
+  TodoStats: ({ todos }: { todos: Todo[] }) => <p>stats for {todos.length}</p>,
+}))
 vi.mock('./components/TodoFilters', () => ({
   TodoFilters: () => null,
 }))
@@ -206,6 +209,16 @@ it('shows a toggle error and disables retry while busy or fetching', () => {
   render(<TodosPage />)
   expect(screen.getByTestId('alert')).toHaveTextContent('Toggle failed')
   expect(screen.getByRole('button', { name: 'Try again' })).toBeDisabled()
+})
+
+it('shows the stats summary only when there are tasks', () => {
+  setup()
+  const { unmount } = render(<TodosPage />)
+  expect(screen.getByText('stats for 1')).toBeVisible()
+  unmount()
+  setup({ query: { data: [] } })
+  render(<TodosPage />)
+  expect(screen.queryByText(/^stats for/)).not.toBeInTheDocument()
 })
 
 it('hides the alert when there is no error', () => {
