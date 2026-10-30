@@ -1,4 +1,4 @@
-import type { Filter, Sort, Todo, TodoInput } from '../types'
+import type { Filter, Sort, Todo, TodoInput, TodoStats } from '../types'
 
 export const priorityLabels = { low: 'Low', medium: 'Medium', high: 'High' }
 const priorityOrder = { high: 0, medium: 1, low: 2 }
@@ -60,6 +60,19 @@ export function isOverdue(todo: Todo): boolean {
   const today = new Date()
   const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
   return !todo.completed && !!todo.due_date && todo.due_date < localDate
+}
+
+export function summarizeTodos(todos: Todo[]): TodoStats {
+  const completed = todos.filter((todo) => todo.completed).length
+  return {
+    total: todos.length,
+    completed,
+    active: todos.length - completed,
+    overdue: todos.filter(isOverdue).length,
+    completionRate: todos.length
+      ? Math.round((completed / todos.length) * 100)
+      : 0,
+  }
 }
 
 export function formatDate(date: string): string {
